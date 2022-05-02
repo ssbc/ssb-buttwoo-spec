@@ -17,13 +17,14 @@ validation.
 
 ## Format
 
-The encoding of a message can be seen as a multiple layers. On the
-first layer is an array of value+signature and
-bipf-encoded-content. On the second layer (value+signature) is an
-array of the encoded value and a dictionary of signatures. The final
-layer is the encoded value.
+The encoding of a message can be seen as a multiple layers. The first
+layer is the value layer. The encoded value is used for
+signatures. The second layer consists of an array of encoded value and
+the signatures dictionary. The encoded of this is the base for the
+message key. Finally the transport layer is an encoded array of the
+second layer together with the bipf encoded content.
 
-### Encoded value
+### Value
 
 An bipf encoded value is a list of:
 
