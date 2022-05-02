@@ -42,8 +42,8 @@ Signatures is a dictionary where the key specifies the starting
 sequence for the signature. It MUST contain at least 1 key, the
 sequence of the current message and sign the encoded value. It can
 contain a signature for N previous messages by signing the
-concatenated message key of these N messages together with the encoded
-value. This allows for substantial reduction in validation time.
+concatenated message keys of these N messages. This allows for
+substantial reduction in validation time.
 
 ## Performance
 
