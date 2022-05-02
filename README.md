@@ -57,7 +57,35 @@ takes 28 seconds.
 
 ## Design choices
 
-FIXME: explain why this doesn't have lipmaa links
+### Keeping timestamps
+
+One difference between butt2 and bamboo is that bamboo does not have
+timestamps in the format, instead leaving those to be part of the
+content. This is important for private messages. This choice was
+mostly formed from an backwards compatible perspective.
+
+### Lipmaa links
+
+Another difference between butt2 and bamboo is that lipmaa links are
+not included. Lipmaa links allows partial replication in cases where
+the specific subset of messages are not important, only that they form
+a valid chain back to the root message. This comes at the cost that
+validation is now more expensive because for roughly every second
+message an additional link needs to be checked. Furthermore with meta
+feeds we can now partition the data of a feed into subsets (such as
+the friends graph and about messages in separate feeds). This leaves
+public messages where lipmaa links based partial replication could be
+useful. Also note for this to really work, the friend graph needs to
+include the root hash besides the feed, otherwise an adversary (given
+the private key) could still create a fake feed. To sum up, the
+advantages does not outweight the disadvantages.
+
+### Sign hash of the content
+
+Similar to bamboo the signature is over the hash of the content and
+not the actual content. This allows validation of a log without the
+actual content. It should be noted that deletion is a whole topic in
+itself, this is just to note that this format also supports this case.
 
 
 [SSB]: https://ssbc.github.io/scuttlebutt-protocol-guide/
