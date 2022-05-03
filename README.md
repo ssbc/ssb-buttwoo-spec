@@ -27,6 +27,15 @@ transport layer is only for backwards compatibility with existing
 replication such as [EBT] and thus not strictly part of the feed
 format.
 
+Visually the format can be viewed as:
+
+```
+  Transport:       [valueSignatures, contentBipf]
+  valueSignatures: [value, signatures]
+  value:           [author, sequence, timestamp, backlink, tag, contentLen, contentHash]
+  signatures:      { sequence: signature, ... }
+```
+
 ### Value
 
 A bipf encoded value is a list of:
