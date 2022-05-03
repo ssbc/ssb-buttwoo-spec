@@ -93,6 +93,14 @@ not the actual content. This allows validation of a log without the
 actual content. It should be noted that deletion is a whole topic in
 itself, this is just to note that this format also supports this case.
 
+### Bipf encoding
+
+While many encodings could be used for encoding of especially the
+value part, bipf is a relatively simple format. The JavaScript 
+implementation is roughly 250 lines for encode and decode. Bipf allows
+the content to be reused when encoding for the database in [ssb-db2] 
+resultating in roughly half the time used compared to existing feed
+format.
 
 [SSB]: https://ssbc.github.io/scuttlebutt-protocol-guide/
 [meta feeds]: https://github.com/ssb-ngi-pointer/ssb-meta-feeds-spec
@@ -101,3 +109,4 @@ itself, this is just to note that this format also supports this case.
 [ssb-bfe]: https://github.com/ssb-ngi-pointer/ssb-bfe-spec
 [blake3]: https://github.com/BLAKE3-team/BLAKE3
 [EBT]: https://github.com/ssbc/ssb-ebt
+[ssb-db2]: https://github.com/ssb-ngi-pointer/ssb-db2
