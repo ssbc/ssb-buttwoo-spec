@@ -7,7 +7,7 @@ existing applications and lastly to be performant.
 
 With the introduction of [meta feeds] it becomes possible to have
 multiple feed formats. This allows us to have an upgrade path from
-existing single feed, to potentially multiple feeds in a new format.
+existing single feed, to potentially multiple feeds in new formats.
 
 Butt2 uses [bipf] for encoding as that is a good foundation for an
 append-only-log system (write once, many reads). It uses [ssb-bfe] for
