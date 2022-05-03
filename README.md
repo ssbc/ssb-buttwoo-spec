@@ -22,11 +22,13 @@ layer is the value layer. The encoded value is used for
 signatures. The second layer consists of an array of encoded value and
 the signatures dictionary. The encoded of this is the base for the
 message key. Finally the transport layer is an encoded array of the
-second layer together with the bipf encoded content.
+second layer together with the bipf encoded content. Note this transport
+layer is only for backwards compatibility with existing replication
+such as [EBT] and thus not strictly part of the feed format.
 
 ### Value
 
-An bipf encoded value is a list of:
+A bipf encoded value is a list of:
 
  - [ssb-bfe] encoded ed25519 author
  - sequence number of the message in the feed
@@ -95,3 +97,4 @@ itself, this is just to note that this format also supports this case.
 [bamboo]: https://github.com/AljoschaMeyer/bamboo/
 [ssb-bfe]: https://github.com/ssb-ngi-pointer/ssb-bfe-spec
 [blake3]: https://github.com/BLAKE3-team/BLAKE3
+[EBT]: https://github.com/ssbc/ssb-ebt
