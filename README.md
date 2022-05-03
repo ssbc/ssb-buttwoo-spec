@@ -50,10 +50,10 @@ allows for substantial reduction in validation time.
 
 ## Performance
 
-A benchmark of an initial prototype shows the time is takes to
-validate and to convert to database format to be reduced in half for
-single message validation. While bulk validation with signatures for
-25 messages to take 1/7 the time of existing format. To put these
+A benchmark of a prototype shows the time it takes to validate and 
+convert for storing in a database to be reduced in half for single 
+message validation. While bulk validation with a signature for every 
+25 messages takes 1/7 the time of existing format. To put these 
 numbers into perspective, on an Intel i7-10510U it takes 3 minutes and
 20 seconds to validate and convert 1 million messages, while butt2
 takes 28 seconds.
