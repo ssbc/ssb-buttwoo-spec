@@ -44,9 +44,9 @@ A bipf encoded value is a list of:
 Signatures is a dictionary where the key specifies the starting
 sequence for the signature. It MUST contain at least 1 key, the
 sequence of the current message and sign the encoded value. It can
-contain a signature for N previous messages by signing the
-concatenated message keys of these N messages. This allows for
-substantial reduction in validation time.
+contain one or more signatures for the N previous messages by 
+signing the concatenated message keys of these N messages. This 
+allows for substantial reduction in validation time.
 
 ## Performance
 
