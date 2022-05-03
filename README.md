@@ -65,7 +65,10 @@ takes 28 seconds.
 One difference between butt2 and bamboo is that bamboo does not have
 timestamps in the format, instead leaving those to be part of the
 content. This is important for private messages. This choice was
-mostly formed from an backwards compatible perspective.
+mostly formed from an backwards compatible perspective. It should be
+noted that with meta feeds it becomes possible to store the messages
+of a private group in a feed that is only exchanged with members of 
+the group, thus leaving the potential metadata leak problem void.
 
 ### Lipmaa links
 
