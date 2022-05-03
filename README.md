@@ -87,14 +87,22 @@ not included. Lipmaa links allows partial replication in cases where
 the specific subset of messages are not important, only that they form
 a valid chain back to the root message. This comes at the cost that
 validation is now more expensive because for roughly every second
-message an additional link needs to be checked. Furthermore with meta
-feeds we can now partition the data of a feed into subsets (such as
-the friends graph and about messages in separate feeds). This leaves
-public messages where lipmaa links based partial replication could be
-useful. Also note for this to really work, the friend graph needs to
-include the root hash besides the feed, otherwise an adversary (given
-the private key) could still create a fake feed. To sum up, the
-advantages does not outweight the disadvantages.
+message an additional link needs to be checked.
+
+Furthermore with meta feeds we can now partition the data of a feed
+into subsets (such as the friends graph and about messages in separate
+feeds). This leaves public messages where lipmaa links based partial
+replication could be useful. Also note for this to really work, the
+friend graph needs to include the root hash besides the feed,
+otherwise an adversary (given the private key) could still create a
+fake feed. 
+
+Lastly we already have another mechanism for doing partial
+replication, namely tangles where messages from multiple feeds are
+linked together and form their own chain.
+
+To sum up, the advantages does not outweight the disadvantages for
+SSB.
 
 ### Sign hash of the content
 
