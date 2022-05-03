@@ -22,9 +22,10 @@ layer is the value layer. The encoded value is used for
 signatures. The second layer consists of an array of encoded value and
 the signatures dictionary. The encoded of this is the base for the
 message key. Finally the transport layer is an encoded array of the
-second layer together with the bipf encoded content. Note this transport
-layer is only for backwards compatibility with existing replication
-such as [EBT] and thus not strictly part of the feed format.
+second layer together with the bipf encoded content. Note this
+transport layer is only for backwards compatibility with existing
+replication such as [EBT] and thus not strictly part of the feed
+format.
 
 ### Value
 
@@ -44,16 +45,16 @@ A bipf encoded value is a list of:
 Signatures is a dictionary where the key specifies the starting
 sequence for the signature. It MUST contain at least 1 key, the
 sequence of the current message and sign the encoded value. It can
-contain one or more signatures for the N previous messages by 
-signing the concatenated message keys of these N messages. This 
-allows for substantial reduction in validation time.
+contain one or more signatures for the N previous messages by signing
+the concatenated message keys of these N messages. This allows for
+substantial reduction in validation time.
 
 ## Performance
 
-A benchmark of a prototype shows the time it takes to validate and 
-convert for storing in a database to be reduced in half for single 
-message validation. While bulk validation with a signature for every 
-25 messages takes 1/7 the time of existing format. To put these 
+A benchmark of a prototype shows the time it takes to validate and
+convert for storing in a database to be reduced in half for single
+message validation. While bulk validation with a signature for every
+25 messages takes 1/7 the time of existing format. To put these
 numbers into perspective, on an Intel i7-10510U it takes 3 minutes and
 20 seconds to validate and convert 1 million messages, while butt2
 takes 28 seconds.
@@ -67,7 +68,7 @@ timestamps in the format, instead leaving those to be part of the
 content. This is important for private messages. This choice was
 mostly formed from an backwards compatible perspective. It should be
 noted that with meta feeds it becomes possible to store the messages
-of a private group in a feed that is only exchanged with members of 
+of a private group in a feed that is only exchanged with members of
 the group, thus leaving the potential metadata leak problem void.
 
 ### Lipmaa links
@@ -96,9 +97,9 @@ itself, this is just to note that this format also supports this case.
 ### Bipf encoding
 
 While many encodings could be used for encoding of especially the
-value part, bipf is a relatively simple format. The JavaScript 
+value part, bipf is a relatively simple format. The JavaScript
 implementation is roughly 250 lines for encode and decode. Bipf allows
-the content to be reused when encoding for the database in [ssb-db2] 
+the content to be reused when encoding for the database in [ssb-db2]
 resultating in roughly half the time used compared to existing feed
 format.
 
