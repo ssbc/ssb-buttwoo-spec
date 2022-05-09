@@ -61,8 +61,9 @@ sequence for the signature. It MUST contain at least 1 key, the
 sequence of the current message and sign the encoded value. It can
 contain one or more signatures for the N previous messages by signing
 the concatenated message keys of these N messages. This allows for
-substantial reduction in validation time. Signatures MUST be sorted by
-sequence in ascending order. This is to ensure canonical encoding.
+substantial reduction in validation time. [Why it is ok to sign hashes
+instead of full messages]. Signatures MUST be sorted by sequence in
+ascending order. This is to ensure canonical encoding.
 
 ## Performance
 
@@ -140,3 +141,4 @@ format.
 [blake3]: https://github.com/BLAKE3-team/BLAKE3
 [EBT]: https://github.com/ssbc/ssb-ebt
 [ssb-db2]: https://github.com/ssb-ngi-pointer/ssb-db2
+[Why it is ok to sign hashes instead of full messages]: https://crypto.stackexchange.com/questions/6335/is-signing-a-hash-instead-of-the-full-data-considered-secure
