@@ -49,6 +49,11 @@ A bipf encoded value is a list of:
  - the length of the content in bytes
  - [ssb-bfe] encoded [blake3] hash of content
 
+### Content
+
+If not encrypted, content should be bipf encoded. If encrypted, a
+[ssb-bfe encrypted data format] MUST be used.
+
 ### Signatures
 
 Signatures is a dictionary where the key specifies the starting
@@ -130,6 +135,7 @@ format.
 [bipf]: https://github.com/ssbc/bipf
 [bamboo]: https://github.com/AljoschaMeyer/bamboo/
 [ssb-bfe]: https://github.com/ssb-ngi-pointer/ssb-bfe-spec
+[ssb-bfe encrypted data format]: https://github.com/ssb-ngi-pointer/ssb-bfe-spec#5-encrypted-data-formats
 [blake3]: https://github.com/BLAKE3-team/BLAKE3
 [EBT]: https://github.com/ssbc/ssb-ebt
 [ssb-db2]: https://github.com/ssb-ngi-pointer/ssb-db2
