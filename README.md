@@ -56,7 +56,8 @@ sequence for the signature. It MUST contain at least 1 key, the
 sequence of the current message and sign the encoded value. It can
 contain one or more signatures for the N previous messages by signing
 the concatenated message keys of these N messages. This allows for
-substantial reduction in validation time.
+substantial reduction in validation time. Signatures MUST be sorted by
+sequence in ascending order. This is to ensure canonical encoding.
 
 ## Performance
 
@@ -67,6 +68,10 @@ message validation. While bulk validation with a signature for every
 numbers into perspective, on an Intel i7-10510U it takes 3 minutes and
 20 seconds to validate and convert 1 million messages, while butt2
 takes 28 seconds.
+
+## Size
+
+There is roughly a 30% size reduction compared to classic format.
 
 ## Design choices
 
