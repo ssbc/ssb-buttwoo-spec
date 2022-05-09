@@ -76,7 +76,8 @@ takes 28 seconds.
 
 ## Size
 
-There is roughly a 30% size reduction compared to classic format.
+There is roughly a 20% size reduction in network traffic compared to
+classic format.
 
 ## Design choices
 
