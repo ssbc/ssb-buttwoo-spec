@@ -30,8 +30,8 @@ format.
 Visually the format can be viewed as:
 
 ```
-  Transport:       [valueSignatures, contentBipf]
-  valueSignatures: [value, signatures]
+  Transport:       [butt2, contentBipf]
+  butt2:           [value, signatures]
   value:           [author, sequence, timestamp, backlink, tag, contentLen, contentHash]
   signatures:      { sequence: signature, ... }
 ```
@@ -79,6 +79,33 @@ takes 28 seconds.
 
 There is roughly a 20% size reduction in network traffic compared to
 classic format.
+
+## Validation
+
+A butt2 message MUST conform to the following rules:
+ - be an bipf encoded array of two elements: value, signatures
+ - Value must be an bipf encoded array of 7 elements:
+   - a [ssb-bfe] encoded author
+   - a sequence that starts with 1 and increases by 1 for each message
+   - a timestamp representing the UNIX epoch timestamp of message
+     creation
+   - a [ssb-bfe] encoded backlink of the previous messages key
+   - a byte representating a tag of either: `0xOO` or `0xO1`
+   - the content length in bytes. This number must not exceed 16384.
+   - the [blake3] hash of the content bytes (FIXME: encoding?)
+ - Signatures must be an bipf encoded dictionary mapping sequences to
+   [ssb-bfe] encoded signatures
+   - must be sorted by sequence in ascending order
+   - if sequence is the same as for the message, then signature is the
+     bytes of the bipf encoded `value` signed using the authors key
+   - any other value must have a sequence lower than the message. For
+     these the signature signs the concatenated bytes of the message
+     keys for the messages starting from `sequence` until but not
+     including the `sequence` of this message.
+
+Content, if available MUST conform to the following rules: 
+ - it must be valid bipf
+ - The byte length must match the content size in value
 
 ## Design choices
 
