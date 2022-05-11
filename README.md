@@ -92,7 +92,7 @@ A butt2 message MUST conform to the following rules:
    - a [ssb-bfe] encoded backlink of the previous messages key
    - a byte representating a tag of either: `0xOO` or `0xO1`
    - the content length in bytes. This number must not exceed 16384.
-   - the [blake3] hash of the content bytes (FIXME: encoding?)
+   - a [ssb-bfe] encoded [blake3] hash of the content bytes
  - Signatures must be an bipf encoded dictionary mapping sequences to
    [ssb-bfe] encoded signatures
    - must be sorted by sequence in ascending order
