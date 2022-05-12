@@ -56,14 +56,28 @@ If not encrypted, content should be bipf encoded. If encrypted, a
 
 ### Signatures
 
-Signatures is a dictionary where the key specifies the starting
-sequence for the signature. It MUST contain at least 1 key, the
-sequence of the current message and sign the encoded value. It can
-contain one or more signatures for the N previous messages by signing
-the concatenated message keys of these N messages. This allows for
-substantial reduction in validation time. [Why it is ok to sign hashes
-instead of full messages]. Signatures MUST be sorted by sequence in
-ascending order. This is to ensure canonical encoding.
+Signatures is a dictionary where the key denotes the first message
+covered by the signature. It MUST contain the current sequence as the
+key for the signature the encoded value. Optionally it can contain one
+or more bulk signatures covering N previous messages. These are meant
+to speed up situations where a large number of messages needs to
+validated such as onboarding. The bulk signatures signs the
+concatenated message keys starting from the sequence in the key up to
+but excluding the current message. [Why it is ok to sign hashes
+instead of full messages].
+
+It is worth expanding a bit on bulk signatures here. Once you start
+making these kind of optimizations, there is always the possibility
+that the signature of an individual message is not correct, while one
+of the bulk signatures are. In this case the messages are still
+considered valid. It should be noted that this case should only occur
+with a faulty implementation that produces incorrect signatures. And
+secondly that one needs to produce enough messages that another peer
+would use the bulk signatures to validate the messages. Meaning there
+is a chance that the problem would be discovered before the messages
+were replicated in the network. Fork protections, where an invalid
+message from a peer would be communicated back, could also be useful
+here.
 
 ## Performance
 
@@ -99,9 +113,9 @@ A butt2 message MUST conform to the following rules:
    - if sequence is the same as for the message, then signature is the
      bytes of the bipf encoded `value` signed using the authors key
    - any other value must have a sequence lower than the message. For
-     these the signature signs the concatenated bytes of the message
-     keys for the messages starting from `sequence` until but not
-     including the `sequence` of this message.
+     these, the signature signs the concatenated bytes of the message
+     keys for the messages starting from `sequence` until but
+     excluding the `sequence` of this message.
 
 Content, if available MUST conform to the following rules: 
  - it must be valid bipf
