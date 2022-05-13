@@ -1,5 +1,7 @@
 # Butt2 feed format
 
+**Do not implement, currently being redesigned**
+
 Butt2 is a new binary feed format for [SSB]. The format is designed to
 simple to implement in languages other than JavaScript, be easy to
 integrate into existing implementations, be backwards compatible with
