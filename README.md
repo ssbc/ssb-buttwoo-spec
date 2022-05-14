@@ -1,95 +1,62 @@
-# Butt2 feed format
+# Bendy butt 2 feed format
 
 **Do not implement, currently being redesigned**
 
-Butt2 is a new binary feed format for [SSB]. The format is designed to
-simple to implement in languages other than JavaScript, be easy to
-integrate into existing implementations, be backwards compatible with
-existing applications and lastly to be performant.
+Bendy butt 2 is a new binary feed format for [SSB]. It is meant as a
+successor to both the [classic] SSB feed format and [bendy butt]. In
+contrast with [bendy butt] subfeeds are identified by the message key
+of the parent feed, thus retaining the same key. It also borrows
+heavily from [bamboo].
 
-With the introduction of [meta feeds] it becomes possible to have
-multiple feed formats. This allows us to have an upgrade path from
-existing single feed, to potentially multiple feeds in new formats.
+The format is designed to be simple to implement, be easy to integrate
+into existing implementations, be backwards compatible with existing
+applications and lastly to be performant.
 
-Butt2 uses [bipf] for encoding as that is a good foundation for an
-append-only-log system (write once, many reads). It uses [ssb-bfe] for
-binary encodings of things like feed and messages. Borrows a lot of
-ideas from [bamboo] and supports bulk signatures for faster
-validation.
+Bendy butt 2 uses [bipf] for encoding since its a good foundation for
+an append-only-log system (write once, many reads). It uses [ssb-bfe]
+for binary encodings of feed and messages.
 
 ## Format
 
-The encoding of a message can be seen as a multiple layers. The first
-layer is the value layer. The encoded value is used for
-signatures. The second layer consists of an array of encoded value and
-the signatures dictionary. The encoded of this is the base for the
-message key. Finally the transport layer is an encoded array of the
-second layer together with the bipf encoded content. Note this
-transport layer is only for backwards compatibility with existing
-replication such as [EBT] and thus not strictly part of the feed
-format.
-
-Visually the format can be viewed as:
-
-```
-  Transport:       [butt2, contentBipf]
-  butt2:           [value, signatures]
-  value:           [author, sequence, timestamp, backlink, tag, contentLen, contentHash]
-  signatures:      { sequence: signature, ... }
-```
+A bendy butt 2 message consists of 8 fields encoded as an array and a
+signature. The message key is the hash of the encoded values
+concatenated with the signature bytes.
 
 ### Value
 
-A bipf encoded value is a list of:
+A bipf encoded value is an array of:
 
  - [ssb-bfe] encoded ed25519 author
+ - [ssb-bfe] encoded parent message id. For the top feed this must be
+   BFE nil.
  - sequence number of the message in the feed
  - the timestamp of the message
- - [ssb-bfe] encoded backlink
- - a byte with extensible tag information (`0xOO` means content is
-   bipf encoded SSB, `0xO1` means end of feed).
+ - [ssb-bfe] encoded previous message id. For the first message this
+   must be BFE nil.
+ - a byte with extensible tag information (`0xOO` means standard
+   message, `0xO1` means sub-feed, `0xO2` means end-of-feed).
  - the length of the content in bytes
  - [ssb-bfe] encoded [blake3] hash of content
+
+## meta feeds
+
+Meta feeds are identified by the tag. Content can include extra
+information what is contained in the sub feed such as the feed
+purpose.
 
 ### Content
 
 If not encrypted, content should be bipf encoded. If encrypted, a
 [ssb-bfe encrypted data format] MUST be used.
 
-### Signatures
-
-Signatures is a dictionary where the key denotes the first message
-covered by the signature. It MUST contain the current sequence as the
-key for the signature the encoded value. Optionally it can contain one
-or more bulk signatures covering N previous messages. These are meant
-to speed up situations where a large number of messages needs to
-validated such as onboarding. The bulk signatures signs the
-concatenated message keys starting from the sequence in the key up to
-but excluding the current message. [Why it is ok to sign hashes
-instead of full messages].
-
-It is worth expanding a bit on bulk signatures here. Once you start
-making these kind of optimizations, there is always the possibility
-that the signature of an individual message is not correct, while one
-of the bulk signatures are. In this case the messages are still
-considered valid. It should be noted that this case should only occur
-with a faulty implementation that produces incorrect signatures. And
-secondly that one needs to produce enough messages that another peer
-would use the bulk signatures to validate the messages. Meaning there
-is a chance that the problem would be discovered before the messages
-were replicated in the network. Fork protections, where an invalid
-message from a peer would be communicated back, could also be useful
-here.
-
 ## Performance
 
 A benchmark of a prototype shows the time it takes to validate and
 convert for storing in a database to be reduced in half for single
-message validation. While bulk validation with a signature for every
-25 messages takes 1/7 the time of existing format. To put these
-numbers into perspective, on an Intel i7-10510U it takes 3 minutes and
-20 seconds to validate and convert 1 million messages, while butt2
-takes 28 seconds.
+message validation. Similar to classic it is possible for lite clients
+to queue up messages for validation and only check the signature of a
+random or the latest message. This can improve the bulk validation
+substantially in onboarding situations.
 
 ## Size
 
@@ -99,29 +66,33 @@ classic format.
 ## Validation
 
 A butt2 message MUST conform to the following rules:
- - be an bipf encoded array of two elements: value, signatures
- - Value must be an bipf encoded array of 7 elements:
+ - Value must be an bipf encoded array of 8 elements:
    - a [ssb-bfe] encoded author
+   - a [ssb-bfe] encoded parent message id
    - a sequence that starts with 1 and increases by 1 for each message
    - a timestamp representing the UNIX epoch timestamp of message
      creation
-   - a [ssb-bfe] encoded backlink of the previous messages key
+   - a [ssb-bfe] encoded previous messages key
    - a byte representating a tag of either: `0xOO` or `0xO1`
    - the content length in bytes. This number must not exceed 16384.
    - a [ssb-bfe] encoded [blake3] hash of the content bytes
- - Signatures must be an bipf encoded dictionary mapping sequences to
-   [ssb-bfe] encoded signatures
-   - must be sorted by sequence in ascending order
-   - if sequence is the same as for the message, then signature is the
-     bytes of the bipf encoded `value` signed using the authors key
-   - any other value must have a sequence lower than the message. For
-     these, the signature signs the concatenated bytes of the message
-     keys for the messages starting from `sequence` until but
-     excluding the `sequence` of this message.
+ - Signature must be a [ssb-bfe] encoded signature and sign the
+   encoded value array.
 
 Content, if available MUST conform to the following rules: 
  - it must be valid bipf
  - The byte length must match the content size in value
+
+## Integration with existing stack
+
+### EBT
+
+Data sent over the wire should be bipf encoded as:
+
+```
+transport:       [value, signature, contentBipf]
+value:           [author, parent, sequence, timestamp, previous, tag, contentLen, contentHash]
+```
 
 ## Design choices
 
@@ -176,6 +147,7 @@ resultating in roughly half the time used compared to existing feed
 format.
 
 [SSB]: https://ssbc.github.io/scuttlebutt-protocol-guide/
+[bendy butt]: https://github.com/ssb-ngi-pointer/bendy-butt-spec
 [meta feeds]: https://github.com/ssb-ngi-pointer/ssb-meta-feeds-spec
 [bipf]: https://github.com/ssbc/bipf
 [bamboo]: https://github.com/AljoschaMeyer/bamboo/
