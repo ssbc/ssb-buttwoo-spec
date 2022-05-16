@@ -38,11 +38,12 @@ A bipf encoded value is an array of:
  - the length of the content in bytes
  - [ssb-bfe] encoded [blake3] hash of content
 
-## meta feeds
+## Meta feeds
 
 Meta feeds are identified by the tag. Content can include extra
 information what is contained in the sub feed such as the feed
-purpose.
+purpose. For messages in a subfeed parent must be filled with the
+message id in the parent feed.
 
 ### Content
 
