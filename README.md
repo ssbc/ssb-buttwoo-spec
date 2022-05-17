@@ -33,8 +33,8 @@ A bipf encoded value is an array of:
  - the timestamp of the message
  - [ssb-bfe] encoded previous message id. For the first message this
    must be BFE nil.
- - a byte with extensible tag information (`0xOO` means standard
-   message, `0xO1` means sub-feed, `0xO2` means end-of-feed).
+ - a byte with extensible tag information (`0x00` means standard
+   message, `0x01` means sub-feed, `0x02` means end-of-feed).
  - the length of the content in bytes
  - [ssb-bfe] encoded [blake3] hash of content
 
