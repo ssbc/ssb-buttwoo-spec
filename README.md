@@ -1,24 +1,21 @@
-# Bendy butt 2 feed format
+# Buttwoo feed format
 
 **Do not implement, currently being redesigned**
 
-Bendy butt 2 is a new binary feed format for [SSB]. It is meant as a
-successor to both the [classic] SSB feed format and [bendy butt]. In
-contrast with [bendy butt] subfeeds are identified by the message key
-of the parent feed, thus retaining the same key. It also borrows
-heavily from [bamboo].
+Buttwoo is a new binary feed format for [SSB]. It draws inspiration
+from [bamboo] and [meta feeds].
 
 The format is designed to be simple to implement, be easy to integrate
 into existing implementations, be backwards compatible with existing
 applications and lastly to be performant.
 
-Bendy butt 2 uses [bipf] for encoding since its a good foundation for
-an append-only-log system (write once, many reads). It uses [ssb-bfe]
-for binary encodings of feed and messages.
+Buttwoo uses [bipf] for encoding since its a good foundation for an
+append-only-log system (write once, many reads). It uses [ssb-bfe] for
+binary encodings of feed and messages.
 
 ## Format
 
-A bendy butt 2 message consists of 8 fields encoded as an array and a
+A buttwoo message consists of 8 fields encoded as an array and a
 signature. The message key is the hash of the encoded values
 concatenated with the signature bytes.
 
@@ -34,16 +31,25 @@ A bipf encoded value is an array of:
  - [ssb-bfe] encoded previous message id. For the first message this
    must be BFE nil.
  - a byte with extensible tag information (`0x00` means standard
-   message, `0x01` means sub-feed, `0x02` means end-of-feed).
+   message, `0x01` means subfeed, `0x02` means end-of-feed).
  - the length of the content in bytes
  - [ssb-bfe] encoded [blake3] hash of content
 
-## Meta feeds
+## Subfeeds
 
-Meta feeds are identified by the tag. Content can include extra
-information what is contained in the sub feed such as the feed
-purpose. For messages in a subfeed parent must be filled with the
-message id in the parent feed.
+Subfeed mesages are identified by the tag. Content can include extra
+information about what is contained in the subfeed, such as the feed
+purpose. For messages in a subfeed, the parent value must be filled
+with the message id in the parent feed.
+
+In contrast with [bendy butt], subfeeds maintain the same feed
+identitier. This makes it easier to work with in situations where,
+what in classic SSB would be single feed, is split into multiple
+parts. As an example, split into about messages, the social graph and
+ordinary messages. While on the other hand [bendy butt] had a clear
+separation between what are meta feeds and what are normal feeds,
+allowing normal feeds to use different feed formats. In this way, they
+can be seen as complementary.
 
 ### Content
 
@@ -148,8 +154,8 @@ resultating in roughly half the time used compared to existing feed
 format.
 
 [SSB]: https://ssbc.github.io/scuttlebutt-protocol-guide/
-[bendy butt]: https://github.com/ssb-ngi-pointer/bendy-butt-spec
 [meta feeds]: https://github.com/ssb-ngi-pointer/ssb-meta-feeds-spec
+[bendy butt]: https://github.com/ssb-ngi-pointer/bendy-butt-spec
 [bipf]: https://github.com/ssbc/bipf
 [bamboo]: https://github.com/AljoschaMeyer/bamboo/
 [ssb-bfe]: https://github.com/ssb-ngi-pointer/ssb-bfe-spec
