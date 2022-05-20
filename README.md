@@ -53,8 +53,12 @@ can be seen as complementary.
 
 ### Content
 
-If not encrypted, content should be bipf encoded. If encrypted, a
-[ssb-bfe encrypted data format] MUST be used.
+If there is content and it is not encrypted, content SHOULD be a bipf
+encoded object. Note this applies to the 3 tag types defined in this
+document. One can use other tags to mean something else. This could be
+used to carry for example files as content.
+
+If encrypted, a [ssb-bfe encrypted data format] MUST be used.
 
 ## Performance
 
@@ -87,7 +91,6 @@ A butt2 message MUST conform to the following rules:
    encoded value array.
 
 Content, if available MUST conform to the following rules: 
- - it must be valid bipf
  - The byte length must match the content size in value
 
 ## Integration with existing stack
