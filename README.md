@@ -17,7 +17,7 @@ binary encodings of feed and messages.
 
 A buttwoo message consists of 8 fields encoded as an array and a
 signature. The message key is the hash of the encoded values
-concatenated with the signature bytes.
+concatenated with the raw signature bytes.
 
 ### Value
 
@@ -88,8 +88,8 @@ A butt2 message MUST conform to the following rules:
    - a byte representating a tag of either: `0x00`, `0x01` or `0x02`
    - the content length in bytes. This number must not exceed 16384.
    - content hash MUST start with `0x00` and be of length 33
- - Signature must be a [ssb-bfe] encoded signature and sign the
-   encoded value array.
+ - Signature MUST sign the the encoded value using the authors key. It
+   MUST be 64 bytes.
 
 Content, if available MUST conform to the following rules: 
  - The byte length must match the content size in value
