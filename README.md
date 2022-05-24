@@ -87,7 +87,7 @@ A butt2 message MUST conform to the following rules:
    - a [ssb-bfe] encoded previous messages key
    - a byte representating a tag of either: `0x00`, `0x01` or `0x02`
    - the content length in bytes. This number must not exceed 16384.
-   - content hash MUST start with `0x00` and be of length 34
+   - content hash MUST start with `0x00` and be of length 33
  - Signature must be a [ssb-bfe] encoded signature and sign the
    encoded value array.
 
