@@ -33,7 +33,8 @@ A bipf encoded value is an array of:
  - a byte with extensible tag information (`0x00` means standard
    message, `0x01` means subfeed, `0x02` means end-of-feed).
  - the length of the content in bytes
- - [ssb-bfe] encoded [blake3] hash of content
+ - hash of content encoded as `0x00` concatenated with the [blake3]
+   hash bytes
 
 ## Subfeeds
 
@@ -84,14 +85,15 @@ A butt2 message MUST conform to the following rules:
    - a timestamp representing the UNIX epoch timestamp of message
      creation
    - a [ssb-bfe] encoded previous messages key
-   - a byte representating a tag of either: `0xOO` or `0xO1`
+   - a byte representating a tag of either: `0x00`, `0x01` or `0x02`
    - the content length in bytes. This number must not exceed 16384.
-   - a [ssb-bfe] encoded [blake3] hash of the content bytes
+   - content hash MUST start with `0x00` and be of length 34
  - Signature must be a [ssb-bfe] encoded signature and sign the
    encoded value array.
 
 Content, if available MUST conform to the following rules: 
  - The byte length must match the content size in value
+ - Content hashed with blake3 must match the content hash in values
 
 ## Integration with existing stack
 
