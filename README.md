@@ -1,6 +1,6 @@
 # Buttwoo feed format
 
-**Do not implement, currently being redesigned**
+**Ready to implement**
 
 Buttwoo is a new binary feed format for [SSB]. It draws inspiration
 from [bamboo] and [meta feeds].
@@ -95,16 +95,20 @@ Content, if available MUST conform to the following rules:
  - The byte length must match the content size in value
  - Content hashed with blake3 must match the content hash in values
 
-## Integration with existing stack
+## Integration with existing SSB stack
 
 ### EBT
 
 Data sent over the wire should be bipf encoded as:
 
 ```
-transport:       [value, signature, contentBipf]
+transport:       [value, signature, content]
 value:           [author, parent, sequence, timestamp, previous, tag, contentLen, contentHash]
 ```
+
+If content is not encrypted, then this value will be a bipf encoded
+buffer. If encrypted, this will be a base64 encoded BFE string
+representation.
 
 ## Design choices
 
