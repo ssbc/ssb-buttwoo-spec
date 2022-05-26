@@ -24,8 +24,8 @@ concatenated with the raw signature bytes.
 A bipf encoded value is an array of:
 
  - [ssb-bfe] encoded ed25519 author
- - [ssb-bfe] encoded parent message id. For the top feed this must be
-   BFE nil.
+ - [ssb-bfe] encoded parent message id used for subfeeds. For the top
+   feed this must be BFE nil.
  - sequence number of the message in the feed
  - the timestamp of the message
  - [ssb-bfe] encoded previous message id. For the first message this
@@ -36,21 +36,28 @@ A bipf encoded value is an array of:
  - hash of content encoded as `0x00` concatenated with the [blake3]
    hash bytes
 
+It is important to note that one author can have multiple feeds, each
+feed defined as author + parent. `sequence` and `previous` relates to
+the feed. Also note that unless parent is used, this behaves exactly
+like an ordinary classic SSB feed.
+
 ## Subfeeds
 
-Subfeed mesages are identified by the tag. Content can include extra
-information about what is contained in the subfeed, such as the feed
-purpose. For messages in a subfeed, the parent value must be filled
-with the message id in the parent feed.
+As noted above it is possible to have multiple feeds with the same
+author. To initiate a subfeed one create a special message on the
+feed. This message must use the `0x01` tag and content can include
+extra information about what is contained in the subfeed, such as the
+feed purpose. The id of this message serves as the parent id of each
+message on the subfeed.
 
 In contrast with [bendy butt], subfeeds maintain the same feed
 identitier. This makes it easier to work with in situations where,
 what in classic SSB would be single feed, is split into multiple
-parts. As an example, split into about messages, the social graph and
-ordinary messages. While on the other hand [bendy butt] had a clear
-separation between what are meta feeds and what are normal feeds,
-allowing normal feeds to use different feed formats. In this way, they
-can be seen as complementary.
+parts. As an example, a feed could be split into: about messages, the
+social graph and ordinary messages. While on the other hand [bendy
+butt] had a clear separation between what are meta feeds and what are
+normal feeds, allowing normal feeds to use different feed formats. In
+this way, they can be seen as complementary.
 
 ### Content
 
@@ -82,9 +89,10 @@ A butt2 message MUST conform to the following rules:
    - a [ssb-bfe] encoded author
    - a [ssb-bfe] encoded parent message id
    - a sequence that starts with 1 and increases by 1 for each message
+     on the feed
    - a timestamp representing the UNIX epoch timestamp of message
      creation
-   - a [ssb-bfe] encoded previous messages key
+   - a [ssb-bfe] encoded previous messages key on the feed
    - a byte representating a tag of either: `0x00`, `0x01` or `0x02`
    - the content length in bytes. This number must not exceed 16384.
    - content hash MUST start with `0x00` and be of length 33
@@ -109,6 +117,8 @@ value:           [author, parent, sequence, timestamp, previous, tag, contentLen
 If content is not encrypted, then this value will be a bipf encoded
 buffer. If encrypted, this will be a base64 encoded BFE string
 representation.
+
+The feedId should be author + parent.
 
 ## Design choices
 
