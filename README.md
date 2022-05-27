@@ -11,35 +11,54 @@ applications and lastly to be performant.
 
 Buttwoo uses [bipf] for encoding since its a good foundation for an
 append-only-log system (write once, many reads). It uses [ssb-bfe] for
-binary encodings of feed and messages.
+binary encodings of feed IDs and message IDs.
 
 ## Format
 
-A buttwoo message consists of 8 fields encoded as an array and a
-signature. The message key is the hash of the encoded values
-concatenated with the raw signature bytes.
+A buttwoo message consists of a bipf-encoded array of 3 fields:
 
-### Value
+- `metadata`
+- `signature`
+- `content`
 
-A bipf encoded value is an array of:
+The message ID is the BFE encoding of the [blake3] hash of the
+concatenation of `metadata` bytes with `signature` bytes.
 
- - [ssb-bfe] encoded ed25519 author
- - [ssb-bfe] encoded parent message id used for subfeeds. For the top
-   feed this must be BFE nil.
- - sequence number of the message in the feed
- - the timestamp of the message
- - [ssb-bfe] encoded previous message id. For the first message this
-   must be BFE nil.
- - a byte with extensible tag information (`0x00` means standard
-   message, `0x01` means subfeed, `0x02` means end-of-feed).
- - the length of the content in bytes
- - hash of content encoded as `0x00` concatenated with the [blake3]
-   hash bytes
+### Metadata
+
+The `metadata` field is a bipf-encoded array with 8 fields:
+
+ - `author`: [ssb-bfe]-encoded buttwoo feed ID, an ed25519 public key
+ - `parent`: [ssb-bfe]-encoded buttwoo message ID used for subfeeds. 
+   For the top feed this must be BFE nil.
+ - `sequence`: number for this message in the feed
+ - `timestamp`: integer representing the UNIX epoch timestamp of 
+   message creation
+ - `previous`: [ssb-bfe]-encoded message ID for the previous message 
+   in the feed. For the first message this must be BFE nil.
+ - `tag`: a byte with extensible tag information (the value `0x00` 
+   means a standard message, `0x01` means subfeed, `0x02` means 
+   end-of-feed). One can use other tags to mean something else. This 
+   could be used to carry for example files as content.
+ - `contentLength`: the length of the bipf-encoded `content` in bytes
+ - `hash`: concatenation of `0x00` with the [blake3] hash of the 
+    bipf-encoded `content` bytes
+    
+### Signature
+
+The `signature` uses the same HMAC signing capability (`sodium.crypto_auth`) 
+and `sodium.crypto_sign_detached` as in the classic SSB format (ed25519).
 
 It is important to note that one author can have multiple feeds, each
 feed defined as author + parent. `sequence` and `previous` relates to
 the feed. Also note that unless parent is used, this behaves exactly
 like an ordinary classic SSB feed.
+
+### Content
+
+The `content` is a free form field. When unencrypted, it SHOULD be a 
+bipf-encoded object. If encrypted, `content` MUST be an 
+[ssb-bfe encrypted data format].
 
 ## Subfeeds
 
@@ -59,15 +78,6 @@ butt] had a clear separation between what are meta feeds and what are
 normal feeds, allowing normal feeds to use different feed formats. In
 this way, they can be seen as complementary.
 
-### Content
-
-If there is content and it is not encrypted, content SHOULD be a bipf
-encoded object. Note this applies to the 3 tag types defined in this
-document. One can use other tags to mean something else. This could be
-used to carry for example files as content.
-
-If encrypted, a [ssb-bfe encrypted data format] MUST be used.
-
 ## Performance
 
 A benchmark of a prototype shows the time it takes to validate and
@@ -85,7 +95,7 @@ classic format.
 ## Validation
 
 A butt2 message MUST conform to the following rules:
- - Value must be an bipf encoded array of 8 elements:
+ - Metadata must be an bipf encoded array of 8 elements:
    - a [ssb-bfe] encoded author
    - a [ssb-bfe] encoded parent message id
    - a sequence that starts with 1 and increases by 1 for each message
@@ -96,7 +106,7 @@ A butt2 message MUST conform to the following rules:
    - a byte representating a tag of either: `0x00`, `0x01` or `0x02`
    - the content length in bytes. This number must not exceed 16384.
    - content hash MUST start with `0x00` and be of length 33
- - Signature MUST sign the the encoded value using the authors key. It
+ - Signature MUST sign the the encoded metadata using the authors key. It
    MUST be 64 bytes.
 
 Content, if available MUST conform to the following rules: 
@@ -110,8 +120,8 @@ Content, if available MUST conform to the following rules:
 Data sent over the wire should be bipf encoded as:
 
 ```
-transport:       [value, signature, content]
-value:           [author, parent, sequence, timestamp, previous, tag, contentLen, contentHash]
+transport:  [metadata, signature, content]
+metadata:   [author, parent, sequence, timestamp, previous, tag, contentLen, contentHash]
 ```
 
 If content is not encrypted, then this value will be a bipf encoded
@@ -166,7 +176,7 @@ itself, this is just to note that this format also supports this case.
 ### Bipf encoding
 
 While many encodings could be used for encoding of especially the
-value part, bipf is a relatively simple format. The JavaScript
+metadata part, bipf is a relatively simple format. The JavaScript
 implementation is roughly 250 lines for encode and decode. Bipf allows
 the content to be reused when encoding for the database in [ssb-db2]
 resultating in roughly half the time used compared to existing feed
