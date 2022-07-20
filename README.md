@@ -31,7 +31,8 @@ The `metadata` field is a bipf-encoded array with 8 fields:
  - `author`: [ssb-bfe]-encoded buttwoo feed ID, an ed25519 public key
  - `parent`: [ssb-bfe]-encoded buttwoo message ID used for subfeeds. 
    For the top feed this must be BFE nil.
- - `sequence`: number for this message in the feed
+ - `sequence`: integer representing the position for this message in
+   the feed. Starts from 1.
  - `timestamp`: integer representing the UNIX epoch timestamp of 
    message creation
  - `previous`: [ssb-bfe]-encoded message ID for the previous message 
