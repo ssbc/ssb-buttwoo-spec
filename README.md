@@ -33,7 +33,7 @@ The `metadata` field is a bipf-encoded array with 8 fields:
    For the top feed this must be BFE nil.
  - `sequence`: integer representing the position for this message in
    the feed. Starts from 1.
- - `timestamp`: integer representing the UNIX epoch timestamp of 
+ - `timestamp`: double representing the UNIX epoch timestamp of 
    message creation
  - `previous`: [ssb-bfe]-encoded message ID for the previous message 
    in the feed. For the first message this must be BFE nil.
