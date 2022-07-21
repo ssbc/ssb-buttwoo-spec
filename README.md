@@ -57,7 +57,7 @@ like an ordinary classic SSB feed.
 
 ### Content
 
-The `content` is a free form field. When unencrypted, it SHOULD be a 
+The `content` is a free form field. When unencrypted, it MUST be a 
 bipf-encoded object. If encrypted, `content` MUST be an 
 [ssb-bfe encrypted data format].
 
