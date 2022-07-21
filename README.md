@@ -37,10 +37,10 @@ The `metadata` field is a bipf-encoded array with 8 fields:
    message creation
  - `previous`: [ssb-bfe]-encoded message ID for the previous message 
    in the feed. For the first message this must be BFE nil.
- - `tag`: a byte with extensible tag information (the value `0x00` 
-   means a standard message, `0x01` means subfeed, `0x02` means 
-   end-of-feed). One can use other tags to mean something else. This 
-   could be used to carry for example files as content.
+ - `tag`: a byte with extensible tag information (the value `0x00`
+   means a standard message, `0x01` means subfeed, `0x02` means
+   end-of-feed). In future versions other tags to mean something
+   else.
  - `contentLength`: the length of the bipf-encoded `content` in bytes
  - `hash`: concatenation of `0x00` with the [blake3] hash of the 
     bipf-encoded `content` bytes
@@ -57,9 +57,9 @@ like an ordinary classic SSB feed.
 
 ### Content
 
-The `content` is a free form field. When unencrypted, it MUST be a 
-bipf-encoded object. If encrypted, `content` MUST be an 
-[ssb-bfe encrypted data format].
+The `content` is a free form field. When unencrypted, it MUST be a
+bipf-encoded object. If encrypted, `content` MUST be an [ssb-bfe
+encrypted data format].
 
 ## Subfeeds
 
