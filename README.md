@@ -1,6 +1,6 @@
 # Buttwoo feed format
 
-Status: **In review**
+Status: **Ready for use**
 
 Buttwoo is a new binary feed format for [SSB]. It draws inspiration
 from [bamboo] and [meta feeds].
