@@ -95,7 +95,7 @@ classic format.
 
 ## Validation
 
-A butt2 message MUST conform to the following rules:
+A buttwoo message MUST conform to the following rules:
  - Metadata must be an bipf encoded array of 8 elements:
    - a [ssb-bfe] encoded author
    - a [ssb-bfe] encoded parent message id
@@ -107,7 +107,7 @@ A butt2 message MUST conform to the following rules:
    - a byte representating a tag of either: `0x00`, `0x01` or `0x02`
    - the content length in bytes. This number must not exceed 16384.
    - content hash MUST start with `0x00` and be of length 33
- - Signature MUST sign the the encoded metadata using the authors key. It
+ - Signature MUST sign the encoded metadata using the authors key. It
    MUST be 64 bytes.
 
 Content, if available MUST conform to the following rules: 
@@ -135,7 +135,7 @@ The feedId should be author + parent.
 
 ### Keeping timestamps
 
-One difference between butt2 and bamboo is that bamboo does not have
+One difference between buttwoo and bamboo is that bamboo does not have
 timestamps in the format, instead leaving those to be part of the
 content. This is important for private messages. This choice was
 mostly formed from an backwards compatible perspective. It should be
@@ -145,7 +145,7 @@ the group, thus leaving the potential metadata leak problem void.
 
 ### Lipmaa links
 
-Another difference between butt2 and bamboo is that lipmaa links are
+Another difference between buttwoo and bamboo is that lipmaa links are
 not included. Lipmaa links allows partial replication in cases where
 the specific subset of messages are not important, only that they form
 a valid chain back to the root message. This comes at the cost that
